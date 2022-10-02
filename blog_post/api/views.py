@@ -24,8 +24,10 @@ class LoginAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class BlogAPIView(generics.ListCreateAPIView):
+class BlogAPIView(generics.GenericAPIView):
     serializer_class = BlogSerializer
+    queryset = Blog.objects.all()
+
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -34,7 +36,7 @@ class BlogAPIView(generics.ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def get(self, APIView):
+    def get(self, request):
         blog = Blog.objects.all()
 
         """
@@ -78,7 +80,7 @@ def PostList(request):
 
     elif request.method == "POST":
         serializer = PostSerializer
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
